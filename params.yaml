@@ -1,0 +1,11 @@
+data:
+  path: data/raw/customer_churn_historical.csv
+  target: Churn
+  id_column: customerID
+split:
+  test_size: 0.20
+  random_state: 42
+selection:
+  primary_metric: recall
+  minimum_roc_auc: 0.75
+

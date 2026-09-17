@@ -1,0 +1,34 @@
+stages:
+  eda:
+    cmd: python scripts/run_eda.py
+    deps:
+      - data/raw/customer_churn_historical.csv
+      - scripts/run_eda.py
+      - src/churn_ml/data.py
+    params:
+      - data
+    outs:
+      - reports/eda_summary.json
+      - reports/figures/target_distribution.png
+      - reports/figures/churn_by_contract.png
+      - reports/figures/numeric_distributions.png
+  train:
+    cmd: python scripts/run_training.py
+    deps:
+      - data/raw/customer_churn_historical.csv
+      - scripts/run_training.py
+      - src/churn_ml/data.py
+      - src/churn_ml/modeling.py
+    params:
+      - data
+      - split
+      - selection
+    outs:
+      - models/candidate.joblib
+      - reports/model_comparison.csv
+      - reports/confusion_matrix.csv
+      - reports/selection.json
+    metrics:
+      - reports/metrics.json:
+          cache: false
+

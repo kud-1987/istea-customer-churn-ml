@@ -1,0 +1,92 @@
+schema: '2.0'
+stages:
+  eda:
+    cmd: python scripts/run_eda.py
+    deps:
+    - path: data/raw/customer_churn_historical.csv
+      hash: md5
+      md5: 178571792c566f067e3d16b5fb913026
+      size: 982638
+    - path: scripts/run_eda.py
+      hash: md5
+      md5: 4bea35eafc9571f37e407cc5a933ce85
+      size: 2704
+    - path: src/churn_ml/data.py
+      hash: md5
+      md5: f21970cdc4d5f00de7427948cf608098
+      size: 1083
+    params:
+      params.yaml:
+        data:
+          path: data/raw/customer_churn_historical.csv
+          target: Churn
+          id_column: customerID
+    outs:
+    - path: reports/eda_summary.json
+      hash: md5
+      md5: 64e038ffad0586af5d7367842af6ff9a
+      size: 1786
+    - path: reports/figures/churn_by_contract.png
+      hash: md5
+      md5: 9a984694adf3780ce6980c979b2c4060
+      size: 32229
+    - path: reports/figures/numeric_distributions.png
+      hash: md5
+      md5: 16dac4bdb5fa50a126702234a5ee7b44
+      size: 57108
+    - path: reports/figures/target_distribution.png
+      hash: md5
+      md5: c2a9aa6106a635c0e3911dbf8f958294
+      size: 21789
+  train:
+    cmd: python scripts/run_training.py
+    deps:
+    - path: data/raw/customer_churn_historical.csv
+      hash: md5
+      md5: 178571792c566f067e3d16b5fb913026
+      size: 982638
+    - path: scripts/run_training.py
+      hash: md5
+      md5: 56fad3bca9ef1566c1763ddca4264e11
+      size: 4447
+    - path: src/churn_ml/data.py
+      hash: md5
+      md5: f21970cdc4d5f00de7427948cf608098
+      size: 1083
+    - path: src/churn_ml/modeling.py
+      hash: md5
+      md5: d39a023936704bfd3da91e15af5342f4
+      size: 4755
+    params:
+      params.yaml:
+        data:
+          path: data/raw/customer_churn_historical.csv
+          target: Churn
+          id_column: customerID
+        selection:
+          primary_metric: recall
+          minimum_roc_auc: 0.75
+        split:
+          test_size: 0.2
+          random_state: 42
+    outs:
+    - path: models/candidate.joblib
+      hash: md5
+      md5: e242b34560fecef9c7fc421bc2d51206
+      size: 8506
+    - path: reports/confusion_matrix.csv
+      hash: md5
+      md5: 265b762ecc1dbc7a72eb02148d2960e4
+      size: 84
+    - path: reports/metrics.json
+      hash: md5
+      md5: 4ccea558c3a4446cdc47ad210cb9be4d
+      size: 171
+    - path: reports/model_comparison.csv
+      hash: md5
+      md5: 8551c8d8b710bce9b655d314756123a1
+      size: 950
+    - path: reports/selection.json
+      hash: md5
+      md5: 39b2a98ec0d94f0539561502885d998a
+      size: 541

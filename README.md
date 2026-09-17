@@ -1,0 +1,109 @@
+# Customer Churn MLOps
+
+Proyecto individual para la Entrega 1 de Laboratorio de Mineria de Datos. El objetivo es transformar el dataset historico de churn en un flujo de entrenamiento reproducible y trazable con Git, DVC, MLflow y Model Registry.
+
+## Estado de la entrega
+
+La estructura, el EDA, el pipeline de preprocessing, la comparacion de modelos y el registro en MLflow estan implementados. Quedan pendientes la publicacion en GitHub, la configuracion del remote DVC y MLflow en DagsHub, y la creacion del tag `entrega-1` sobre el commit final.
+
+## Problema de negocio
+
+Se busca estimar la probabilidad de abandono de clientes de telecomunicaciones. Un falso negativo representa un cliente que abandonara y que el modelo considera estable; por eso se prioriza `recall` de la clase churn, manteniendo ROC-AUC como control de capacidad discriminante.
+
+## Datos
+
+- `data/raw/customer_churn_historical.csv`: 7043 registros con target `Churn`. Se usa para entrenamiento y evaluacion.
+- `data/production/customer_churn_current.csv`: lote actual sin target. Se reserva para monitoreo y drift.
+- `data/scoring/scoring_batch.csv`: lote sin target para pruebas futuras de inferencia.
+- `customerID` se conserva para trazabilidad, pero se excluye de los predictores.
+
+Los CSV no deben versionarse directamente con Git. DVC conserva sus archivos de seguimiento y almacena el contenido en el remote configurado.
+
+## Estructura
+
+```text
+data/                 datasets administrados por DVC
+metadata/             esquema, diccionario y manifiesto
+src/churn_ml/          carga, preprocessing, modelos y evaluacion
+scripts/               puntos de entrada ejecutables
+reports/               EDA, metricas y comparacion de modelos
+models/                modelo candidato generado
+tests/                 pruebas del pipeline
+dvc.yaml               pipeline reproducible
+params.yaml            parametros versionados
+```
+
+## Instalacion
+
+Requiere Python 3.11 o compatible.
+
+```bash
+python -m venv .venv
+.venv\Scripts\activate
+python -m pip install -r requirements.txt
+```
+
+## Ejecucion local
+
+Sin DVC:
+
+```bash
+python scripts/run_eda.py
+python scripts/run_training.py
+pytest
+```
+
+Con DVC:
+
+```bash
+dvc pull
+dvc repro
+dvc metrics show
+```
+
+En una carpeta sincronizada por OneDrive, DVC puede fallar al mover archivos de su cache de ejecuciones. En ese caso usar `dvc repro --no-run-cache`; el resultado del pipeline y `dvc.lock` se conservan igualmente.
+
+La ejecucion de entrenamiento registra seis runs razonados: baseline, dos regresiones logisticas y tres bosques aleatorios. El run elegido se registra como `customer-churn-candidate`.
+
+La comparacion obtenida en la ejecucion validada se resume en [docs/RESULTADOS_MODELOS.md](docs/RESULTADOS_MODELOS.md).
+
+## Configuracion de DagsHub
+
+No guardar tokens en el repositorio. Configurar el remote DVC cuando exista el proyecto:
+
+```bash
+dvc remote add -d origin <URL_DEL_REMOTE_DVC>
+dvc remote modify origin --local auth basic
+dvc remote modify origin --local user <USUARIO>
+dvc remote modify origin --local password <TOKEN>
+dvc push
+```
+
+Para MLflow, definir las variables del entorno usando los valores provistos por DagsHub:
+
+```powershell
+$env:MLFLOW_TRACKING_URI='<URL_MLFLOW>'
+$env:MLFLOW_TRACKING_USERNAME='<USUARIO>'
+$env:MLFLOW_TRACKING_PASSWORD='<TOKEN>'
+python scripts/run_training.py
+```
+
+Si no se define un servidor remoto, MLflow usa `./mlruns` mediante una URI absoluta y permite verificar todo el flujo localmente.
+
+## Criterio de seleccion
+
+Se prioriza el mayor recall de churn entre modelos con ROC-AUC igual o superior al minimo configurado. Este criterio reduce falsos negativos sin aceptar un modelo con discriminacion insuficiente. Los resultados quedan en `reports/model_comparison.csv` y la decision completa en `reports/selection.json`.
+
+## Cierre de la Entrega 1
+
+1. Crear el repositorio de GitHub y copiar este contenido.
+2. Inicializar Git y DVC; ejecutar `dvc add` para los tres CSV.
+3. Configurar los remotes de DVC y MLflow en DagsHub.
+4. Ejecutar `dvc repro` y comprobar los runs y el modelo registrado.
+5. Ejecutar `pytest` y revisar `reports/model_comparison.csv`.
+6. Confirmar que un clon limpio puede ejecutar `dvc pull` y reproducir el entrenamiento.
+7. Crear el tag con `git tag entrega-1` y publicar con `git push origin entrega-1`.
+
+## Limitaciones
+
+La seleccion se realiza con un unico holdout estratificado. Para una version productiva convendria incorporar validacion cruzada, ajuste de threshold basado en costos y validacion temporal cuando exista una dimension de tiempo confiable.
