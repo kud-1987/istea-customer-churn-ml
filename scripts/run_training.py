@@ -23,6 +23,19 @@ from churn_ml.modeling import (  # noqa: E402
 
 
 def configure_mlflow():
+    if os.getenv("DAGSHUB_REPO"):
+        import dagshub
+
+        dagshub.init(
+            repo_owner=os.getenv("DAGSHUB_OWNER", "kud-1987"),
+            repo_name=os.environ["DAGSHUB_REPO"],
+            mlflow=True,
+        )
+        mlflow.set_experiment(
+            os.getenv("MLFLOW_EXPERIMENT_NAME", "customer-churn-entrega-1")
+        )
+        return
+
     tracking_uri = os.getenv("MLFLOW_TRACKING_URI", (ROOT / "mlruns").resolve().as_uri())
     mlflow.set_tracking_uri(tracking_uri)
     mlflow.set_experiment(os.getenv("MLFLOW_EXPERIMENT_NAME", "customer-churn-entrega-1"))

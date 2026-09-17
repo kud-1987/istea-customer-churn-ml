@@ -79,14 +79,16 @@ dvc remote modify origin --local password <TOKEN>
 dvc push
 ```
 
-Para MLflow, definir las variables del entorno usando los valores provistos por DagsHub:
+Para MLflow, iniciar sesion mediante OAuth y activar DagsHub para la ejecucion:
 
 ```powershell
-$env:MLFLOW_TRACKING_URI='<URL_MLFLOW>'
-$env:MLFLOW_TRACKING_USERNAME='<USUARIO>'
-$env:MLFLOW_TRACKING_PASSWORD='<TOKEN>'
+dagshub login
+$env:DAGSHUB_OWNER='kud-1987'
+$env:DAGSHUB_REPO='istea-customer-churn-ml'
 python scripts/run_training.py
 ```
+
+El login abre una autorizacion en el navegador y evita escribir el token en el comando o almacenarlo en el repositorio.
 
 Si no se define un servidor remoto, MLflow usa `./mlruns` mediante una URI absoluta y permite verificar todo el flujo localmente.
 
