@@ -47,8 +47,8 @@ stages:
       size: 982638
     - path: scripts/run_training.py
       hash: md5
-      md5: 56fad3bca9ef1566c1763ddca4264e11
-      size: 4447
+      md5: ba258fcd26041f158f396d5b8806c4d5
+      size: 4909
     - path: src/churn_ml/data.py
       hash: md5
       md5: f21970cdc4d5f00de7427948cf608098
@@ -84,9 +84,9 @@ stages:
       size: 171
     - path: reports/model_comparison.csv
       hash: md5
-      md5: 8551c8d8b710bce9b655d314756123a1
-      size: 950
+      md5: 379087bfbb1f0465f560c5ce3c4c29a6
+      size: 947
     - path: reports/selection.json
       hash: md5
-      md5: 39b2a98ec0d94f0539561502885d998a
+      md5: f00ea2d9b06402d5416414df22376aa5
       size: 541

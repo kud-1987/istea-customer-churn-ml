@@ -59,6 +59,7 @@ def main():
     result_rows = []
     trained_models = {}
     run_ids = {}
+    logged_model_uris = {}
     matrices = {}
 
     for experiment in experiment_catalog(params["split"]["random_state"]):
@@ -73,9 +74,9 @@ def main():
             mlflow.log_artifact(str(ROOT / "params.yaml"))
             input_example = x_train.head(3)
             signature = infer_signature(input_example, model.predict(input_example))
-            mlflow.sklearn.log_model(
+            model_info = mlflow.sklearn.log_model(
                 model,
-                artifact_path="model",
+                name="model",
                 input_example=input_example,
                 signature=signature,
             )
@@ -90,6 +91,7 @@ def main():
             )
             trained_models[experiment.name] = model
             run_ids[experiment.name] = run.info.run_id
+            logged_model_uris[experiment.name] = model_info.model_uri
             matrices[experiment.name] = matrix
 
     results = pd.DataFrame(result_rows).sort_values("recall", ascending=False)
@@ -99,7 +101,7 @@ def main():
     candidate_run_id = run_ids[candidate_name]
     model_name = os.getenv("MLFLOW_MODEL_NAME", "customer-churn-candidate")
 
-    model_uri = f"runs:/{candidate_run_id}/model"
+    model_uri = logged_model_uris[candidate_name]
     registered = mlflow.register_model(model_uri=model_uri, name=model_name)
     joblib.dump(candidate_model, models / "candidate.joblib")
 
