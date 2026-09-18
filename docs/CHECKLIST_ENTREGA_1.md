@@ -25,7 +25,7 @@ Fecha limite: 22/09/2026 a las 19:00.
 - [x] Configurar y probar el remote DVC.
 - [x] Configurar MLflow para que los seis runs queden visibles en DagsHub.
 - [x] Confirmar que el modelo aparezca en Model Registry y conserve el run de origen.
-- [ ] Probar un clon limpio con `dvc pull` y `dvc repro`.
-- [ ] Crear y publicar el tag `entrega-1`.
-- [ ] Verificar permisos de todos los enlaces.
+- [x] Probar un clon limpio con `dvc pull` y `dvc repro`.
+- [x] Crear y publicar el tag `entrega-1`.
+- [x] Verificar permisos de todos los enlaces.
 - [ ] Enviar el correo antes de las 19:00.
