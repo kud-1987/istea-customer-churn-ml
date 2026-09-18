@@ -18,15 +18,14 @@ Fecha limite: 22/09/2026 a las 19:00.
 
 ## Requiere GitHub y DagsHub
 
-- [ ] Crear repositorio de GitHub.
-- [ ] Inicializar Git y agregar el remote de GitHub.
-- [ ] Inicializar DVC y ejecutar `dvc add` sobre los tres CSV.
-- [ ] Crear proyecto en DagsHub.
-- [ ] Configurar y probar el remote DVC.
-- [ ] Configurar MLflow para que los seis runs queden visibles en DagsHub.
-- [ ] Confirmar que el modelo aparezca en Model Registry y conserve el run de origen.
+- [x] Crear repositorio de GitHub.
+- [x] Inicializar Git y agregar el remote de GitHub.
+- [x] Inicializar DVC y ejecutar `dvc add` sobre los tres CSV.
+- [x] Crear proyecto en DagsHub.
+- [x] Configurar y probar el remote DVC.
+- [x] Configurar MLflow para que los seis runs queden visibles en DagsHub.
+- [x] Confirmar que el modelo aparezca en Model Registry y conserve el run de origen.
 - [ ] Probar un clon limpio con `dvc pull` y `dvc repro`.
 - [ ] Crear y publicar el tag `entrega-1`.
 - [ ] Verificar permisos de todos los enlaces.
 - [ ] Enviar el correo antes de las 19:00.
-

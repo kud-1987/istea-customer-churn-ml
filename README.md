@@ -4,7 +4,7 @@ Proyecto individual para la Entrega 1 de Laboratorio de Mineria de Datos. El obj
 
 ## Estado de la entrega
 
-La estructura, el EDA, el pipeline de preprocessing, la comparacion de modelos y el registro en MLflow estan implementados. Quedan pendientes la publicacion en GitHub, la configuracion del remote DVC y MLflow en DagsHub, y la creacion del tag `entrega-1` sobre el commit final.
+La estructura, el EDA, el pipeline de preprocessing y la comparacion de modelos estan implementados. El codigo se publica en GitHub, los datos y artefactos se versionan con DVC en DagsHub, y los seis experimentos y el modelo candidato quedan registrados en MLflow y Model Registry. El cierre formal requiere comprobar la reproduccion desde un clon limpio y crear el tag `entrega-1` sobre el commit presentado.
 
 ## Problema de negocio
 
@@ -98,13 +98,12 @@ Se prioriza el mayor recall de churn entre modelos con ROC-AUC igual o superior 
 
 ## Cierre de la Entrega 1
 
-1. Crear el repositorio de GitHub y copiar este contenido.
-2. Inicializar Git y DVC; ejecutar `dvc add` para los tres CSV.
-3. Configurar los remotes de DVC y MLflow en DagsHub.
-4. Ejecutar `dvc repro` y comprobar los runs y el modelo registrado.
-5. Ejecutar `pytest` y revisar `reports/model_comparison.csv`.
-6. Confirmar que un clon limpio puede ejecutar `dvc pull` y reproducir el entrenamiento.
-7. Crear el tag con `git tag entrega-1` y publicar con `git push origin entrega-1`.
+1. Ejecutar `dvc push` y confirmar que el remote este actualizado.
+2. Ejecutar `pytest` y revisar `reports/model_comparison.csv`.
+3. Confirmar que un clon limpio puede ejecutar `dvc pull` y `dvc repro`.
+4. Verificar los seis runs y la version `1` de `customer-churn-candidate` en DagsHub.
+5. Crear el tag con `git tag entrega-1` y publicar con `git push origin entrega-1`.
+6. Verificar permisos de GitHub, DagsHub, MLflow y Model Registry antes de enviar el correo.
 
 ## Limitaciones
 
