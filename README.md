@@ -4,7 +4,7 @@ Proyecto individual para la Entrega 1 de Laboratorio de Mineria de Datos. El obj
 
 ## Estado de la entrega
 
-La estructura, el EDA, el pipeline de preprocessing y la comparacion de modelos estan implementados. El codigo se publica en GitHub, los datos y artefactos se versionan con DVC en DagsHub, y los seis experimentos y el modelo candidato quedan registrados en MLflow y Model Registry. El cierre formal requiere comprobar la reproduccion desde un clon limpio y crear el tag `entrega-1` sobre el commit presentado.
+La estructura, el EDA, el pipeline de preprocessing y la comparacion de modelos estan implementados. El codigo se publica en GitHub, los datos y artefactos se versionan con DVC en DagsHub, y los seis experimentos y el modelo candidato quedan registrados en MLflow y Model Registry. La reproduccion fue validada desde un clon limpio y la version presentada quedo identificada mediante el tag `entrega-1`.
 
 ## Problema de negocio
 
