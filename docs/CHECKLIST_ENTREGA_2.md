@@ -28,6 +28,8 @@ Opcion administrativa del 03/11/2026: aplicacion de inferencia con contrato REST
 - [x] Limites de los niveles de riesgo.
 - [x] Smoke test con el artefacto real.
 - [x] Suite completa: 9 pruebas aprobadas.
+- [x] Validacion manual en Swagger: `GET /health` respondio HTTP 200 con `model_loaded: true` y `model_version: "1"`.
+- [x] Validacion manual en Swagger: `POST /predict` respondio HTTP 200 con el contrato completo.
 
 ## Como demostrarlo
 
@@ -40,7 +42,7 @@ Opcion administrativa del 03/11/2026: aplicacion de inferencia con contrato REST
 
 ## Pendiente antes del envio
 
-- [ ] Revisar la fecha y modalidad definitiva indicadas por el profesor.
-- [ ] Confirmar que GitHub y DagsHub contienen el ultimo commit.
-- [ ] Crear y publicar el tag `entrega-2` cuando la version sea definitiva.
+- [x] Revisar la fecha y modalidad administrativa: opcion del 03/11/2026 sin Docker.
+- [x] Confirmar que GitHub contiene la version definitiva de la Entrega 2.
+- [x] Crear y publicar el tag `entrega-2` sobre la version definitiva.
 - [ ] Enviar el correo con enlaces y una sintesis de cumplimiento.
