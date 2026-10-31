@@ -1,10 +1,10 @@
 # Customer Churn MLOps
 
-Proyecto individual para la Entrega 1 de Laboratorio de Mineria de Datos. El objetivo es transformar el dataset historico de churn en un flujo de entrenamiento reproducible y trazable con Git, DVC, MLflow y Model Registry.
+Proyecto individual de Laboratorio de Mineria de Datos. La Entrega 1 construye un flujo de entrenamiento reproducible y trazable. La Entrega 2 publica el modelo seleccionado como una API REST validada y testeada.
 
 ## Estado de la entrega
 
-La estructura, el EDA, el pipeline de preprocessing y la comparacion de modelos estan implementados. El codigo se publica en GitHub, los datos y artefactos se versionan con DVC en DagsHub, y los seis experimentos y el modelo candidato quedan registrados en MLflow y Model Registry. La reproduccion fue validada desde un clon limpio y la version presentada quedo identificada mediante el tag `entrega-1`.
+La Entrega 1 esta completa. Para la opcion administrativa del 03/11/2026, la Entrega 2 incorpora FastAPI, contratos Pydantic, carga unica del artefacto al iniciar, endpoints de salud, prediccion individual, documentacion OpenAPI y pruebas automaticas. Docker y Docker Compose quedan para el alcance completo del 17/11/2026 y para el examen final.
 
 ## Problema de negocio
 
@@ -28,7 +28,8 @@ src/churn_ml/          carga, preprocessing, modelos y evaluacion
 scripts/               puntos de entrada ejecutables
 reports/               EDA, metricas y comparacion de modelos
 models/                modelo candidato generado
-tests/                 pruebas del pipeline
+app/                   API REST, contratos y logica de inferencia
+tests/                 pruebas del pipeline, contratos e inferencia
 dvc.yaml               pipeline reproducible
 params.yaml            parametros versionados
 ```
@@ -66,6 +67,53 @@ En una carpeta sincronizada por OneDrive, DVC puede fallar al mover archivos de 
 La ejecucion de entrenamiento registra seis runs razonados: baseline, dos regresiones logisticas y tres bosques aleatorios. El run elegido se registra como `customer-churn-candidate`.
 
 La comparacion obtenida en la ejecucion validada se resume en [docs/RESULTADOS_MODELOS.md](docs/RESULTADOS_MODELOS.md).
+
+## Entrega 2: API de inferencia
+
+Iniciar la API desde la raiz del repositorio:
+
+```powershell
+.\.venv\Scripts\python.exe -m uvicorn app.main:app --host 127.0.0.1 --port 8000
+```
+
+Abrir `http://127.0.0.1:8000/docs` para usar Swagger. El endpoint principal es `POST /predict`; los endpoints `GET /health`, `GET /health/live` y `GET /health/ready` permiten comprobar el estado del servicio y del modelo.
+
+Ejemplo de entrada:
+
+```json
+{
+  "gender": "Female",
+  "SeniorCitizen": 0,
+  "Partner": "Yes",
+  "Dependents": "No",
+  "tenure": 1,
+  "PhoneService": "No",
+  "MultipleLines": "No phone service",
+  "InternetService": "DSL",
+  "OnlineSecurity": "No",
+  "OnlineBackup": "Yes",
+  "DeviceProtection": "No",
+  "TechSupport": "No",
+  "StreamingTV": "No",
+  "StreamingMovies": "No",
+  "Contract": "Month-to-month",
+  "PaperlessBilling": "Yes",
+  "PaymentMethod": "Electronic check",
+  "MonthlyCharges": 29.85,
+  "TotalCharges": 29.85
+}
+```
+
+La respuesta contiene la clase predicha, probabilidad de churn, nivel de riesgo, version del modelo y un identificador de solicitud. Los umbrales actuales son: bajo menor a 0.4, medio desde 0.4 hasta menos de 0.7 y alto desde 0.7.
+
+Validar la implementacion:
+
+```powershell
+.\.venv\Scripts\python.exe -m pytest -q
+.\.venv\Scripts\python.exe .\scripts\smoke_test_api_model.py
+```
+
+El primer comando prueba contratos, endpoints y logica con dobles controlados. El segundo carga `models/candidate.joblib` y ejecuta una inferencia real sobre el primer registro del lote de scoring.
 
 ## Configuracion de DagsHub
 
