@@ -16,10 +16,10 @@ def request_to_frame(payload: PredictionRequest, feature_order) -> pd.DataFrame:
 
 def risk_level(probability: float) -> str:
     if probability < LOW_RISK_THRESHOLD:
-        return "low"
+        return "LOW"
     if probability < HIGH_RISK_THRESHOLD:
-        return "medium"
-    return "high"
+        return "MEDIUM"
+    return "HIGH"
 
 
 def predict_churn(model, payload: PredictionRequest) -> dict:
@@ -35,8 +35,7 @@ def predict_churn(model, payload: PredictionRequest) -> dict:
     probability = float(model.predict_proba(features)[0][positive_class_index])
 
     return {
-        "prediction": prediction,
-        "churn": "Yes" if prediction == 1 else "No",
+        "prediction": "CHURN" if prediction == 1 else "NO_CHURN",
         "probability": probability,
         "risk_level": risk_level(probability),
     }

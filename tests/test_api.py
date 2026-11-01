@@ -45,10 +45,9 @@ def test_health_reports_loaded_model(api_request):
 def test_predict_returns_contract(api_request):
     payload = PredictionRequest(**VALID_PAYLOAD)
     body = predict(payload, api_request)
-    assert body.prediction in [0, 1]
-    assert body.churn in ["No", "Yes"]
+    assert body.prediction in ["NO_CHURN", "CHURN"]
     assert 0 <= body.probability <= 1
-    assert body.risk_level in ["low", "medium", "high"]
+    assert body.risk_level in ["LOW", "MEDIUM", "HIGH"]
     assert body.model_version == "1"
     assert body.request_id
 

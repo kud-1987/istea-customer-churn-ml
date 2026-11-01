@@ -37,10 +37,9 @@ class PredictionRequest(BaseModel):
 
 
 class PredictionResponse(BaseModel):
-    prediction: Literal[0, 1]
-    churn: Literal["No", "Yes"]
+    prediction: Literal["NO_CHURN", "CHURN"]
     probability: float = Field(ge=0, le=1)
-    risk_level: Literal["low", "medium", "high"]
+    risk_level: Literal["LOW", "MEDIUM", "HIGH"]
     model_version: str
     request_id: str
 

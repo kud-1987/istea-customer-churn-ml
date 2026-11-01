@@ -104,7 +104,7 @@ Ejemplo de entrada:
 }
 ```
 
-La respuesta contiene la clase predicha, probabilidad de churn, nivel de riesgo, version del modelo y un identificador de solicitud. Los umbrales actuales son: bajo menor a 0.4, medio desde 0.4 hasta menos de 0.7 y alto desde 0.7.
+La respuesta contiene la clase predicha (`CHURN` o `NO_CHURN`), probabilidad de churn, nivel de riesgo, version del modelo y un identificador de solicitud. Los umbrales actuales son: `LOW` menor a 0.4, `MEDIUM` desde 0.4 hasta menos de 0.7 y `HIGH` desde 0.7.
 
 Validar la implementacion:
 
@@ -114,6 +114,8 @@ Validar la implementacion:
 ```
 
 El primer comando prueba contratos, endpoints y logica con dobles controlados. El segundo carga `models/candidate.joblib` y ejecuta una inferencia real sobre el primer registro del lote de scoring.
+
+La explicacion conceptual completa, el flujo de una prediccion y la auditoria contra la consigna y las clases se encuentran en [docs/GUIA_CONCEPTUAL_ENTREGA_2.docx](docs/GUIA_CONCEPTUAL_ENTREGA_2.docx).
 
 ## Configuracion de DagsHub
 

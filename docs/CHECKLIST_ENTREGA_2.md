@@ -1,4 +1,6 @@
-# Checklist de Entrega 2
+# Checklist auditado de Entrega 2
+
+Auditoria realizada contra la consigna oficial del proyecto, la nota administrativa de Classroom y los contenidos de testing y serving desarrollados en clase.
 
 ## Alcance elegido
 
@@ -17,6 +19,40 @@ Opcion administrativa del 03/11/2026: aplicacion de inferencia con contrato REST
 - [x] Publicar la documentacion interactiva OpenAPI en `/docs`.
 - [x] Responder `422` ante contratos invalidos, `400` ante errores controlados, `503` si falta el modelo y `500` ante fallas inesperadas.
 
+## Matriz contra la consigna oficial
+
+| Requisito | Estado | Evidencia |
+|---|---|---|
+| `GET /health` operativo e identificacion de version | Cumplido | `app/main.py`; validacion manual HTTP 200, modelo cargado, version 1. |
+| `POST /predict` con pipeline completo | Cumplido | `app/main.py`, `app/inference.py`; validacion manual HTTP 200. |
+| `prediction`, `probability`, `risk_level`, `model_version` | Cumplido | `PredictionResponse`; clases `CHURN`/`NO_CHURN` y riesgos `LOW`/`MEDIUM`/`HIGH`. |
+| Contratos de entrada y salida con Pydantic | Cumplido | `app/schemas.py`; 19 variables, campos extra prohibidos, tipos, rangos y categorias. |
+| OpenAPI/Swagger accesible | Cumplido | `/docs` validado manualmente. |
+| Test de carga del modelo o pipeline | Cumplido | `tests/test_model_loader.py`. |
+| Test de prediccion valida | Cumplido | `tests/test_api.py` y smoke test con el artefacto real. |
+| Test de estructura y tipos de respuesta | Cumplido | `tests/test_api.py`. |
+| Tests de `/health` y `/predict` | Cumplido | Handlers y contratos automatizados; endpoints validados manualmente desde Swagger. |
+| Entradas invalidas y errores esperados | Cumplido | Casos de campo faltante y categoria desconocida; FastAPI documenta respuesta 422. |
+| Dockerfile, `.dockerignore`, imagen y puerto | Postergado por alcance | Excluido de la opcion administrativa del 03/11/2026. |
+| `compose.yaml` y `docker compose up` | Postergado por alcance | Excluido de la opcion administrativa del 03/11/2026. |
+| Tag `entrega-2` sobre el commit presentado | Cumplido | El tag se actualiza al commit definitivo de esta auditoria antes del envio. |
+
+## Matriz contra los contenidos de clase
+
+| Concepto trabajado | Estado | Implementacion |
+|---|---|---|
+| Separar training de serving | Cumplido | La API carga un artefacto ya entrenado; no ejecuta `fit`. |
+| Servir el pipeline serializado completo | Cumplido | `models/candidate.joblib` contiene preprocessing y estimador. |
+| Validar en la frontera antes de inferir | Cumplido | Pydantic valida presencia, tipos, rangos y categorias. |
+| Adaptar el request a estructura tabular | Cumplido | `request_to_frame` crea una fila con el orden de features del modelo. |
+| Usar `predict` y `predict_proba` | Cumplido | La respuesta combina clase y probabilidad de churn. |
+| No asumir la posicion de la clase positiva | Cumplido | Se obtiene el indice de la clase `1` desde `model.classes_`. |
+| Cargar el modelo una vez al iniciar | Cumplido | FastAPI `lifespan` guarda el modelo en `app.state`. |
+| Incluir version y `request_id` | Cumplido | Ambos forman parte de `PredictionResponse`. |
+| Health check y readiness | Cumplido | `/health`, `/health/live` y `/health/ready`. |
+| Suite pequena pero significativa | Cumplido | Tests de esquema, inferencia, thresholds, OpenAPI y carga real. |
+| Smoke test de inferencia | Cumplido | `scripts/smoke_test_api_model.py`. |
+
 ## Pruebas y evidencia
 
 - [x] Health check con modelo disponible.
@@ -27,7 +63,7 @@ Opcion administrativa del 03/11/2026: aplicacion de inferencia con contrato REST
 - [x] Indice de clase positiva aunque `classes_` este invertido.
 - [x] Limites de los niveles de riesgo.
 - [x] Smoke test con el artefacto real.
-- [x] Suite completa: 9 pruebas aprobadas.
+- [x] Suite completa: 10 pruebas aprobadas.
 - [x] Validacion manual en Swagger: `GET /health` respondio HTTP 200 con `model_loaded: true` y `model_version: "1"`.
 - [x] Validacion manual en Swagger: `POST /predict` respondio HTTP 200 con el contrato completo.
 

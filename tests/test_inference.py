@@ -18,11 +18,11 @@ class ReverseClassModel:
 def test_positive_probability_uses_class_index():
     result = predict_churn(ReverseClassModel(), PredictionRequest(**VALID_PAYLOAD))
     assert result["probability"] == 0.82
-    assert result["risk_level"] == "high"
+    assert result["risk_level"] == "HIGH"
 
 
 def test_risk_thresholds():
-    assert risk_level(0.39) == "low"
-    assert risk_level(0.4) == "medium"
-    assert risk_level(0.69) == "medium"
-    assert risk_level(0.7) == "high"
+    assert risk_level(0.39) == "LOW"
+    assert risk_level(0.4) == "MEDIUM"
+    assert risk_level(0.69) == "MEDIUM"
+    assert risk_level(0.7) == "HIGH"
