@@ -31,4 +31,14 @@ stages:
     metrics:
       - reports/metrics.json:
           cache: false
+  monitor:
+    cmd: python scripts/run_data_drift.py
+    deps:
+      - data/raw/customer_churn_historical.csv
+      - data/production/customer_churn_current.csv
+      - scripts/run_data_drift.py
+      - src/churn_ml/data.py
+    outs:
+      - reports/drift_report.html
+      - reports/drift_summary.json
 

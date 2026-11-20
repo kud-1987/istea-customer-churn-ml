@@ -1,0 +1,16 @@
+.git
+.github
+.dvc/cache
+.dvc/tmp
+.venv
+__pycache__
+*.pyc
+.pytest_cache
+.matplotlib
+mlruns
+data
+docs
+reports/figures
+tests
+.env
+*.md

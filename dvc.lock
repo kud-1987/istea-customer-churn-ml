@@ -90,3 +90,31 @@ stages:
       hash: md5
       md5: f00ea2d9b06402d5416414df22376aa5
       size: 541
+  monitor:
+    cmd: python scripts/run_data_drift.py
+    deps:
+    - path: data/production/customer_churn_current.csv
+      hash: md5
+      md5: 18ee7405c7a46e2a2a524b1926732557
+      size: 318363
+    - path: data/raw/customer_churn_historical.csv
+      hash: md5
+      md5: 178571792c566f067e3d16b5fb913026
+      size: 982638
+    - path: scripts/run_data_drift.py
+      hash: md5
+      md5: ea7812913144832ed72b87bf96475e16
+      size: 3283
+    - path: src/churn_ml/data.py
+      hash: md5
+      md5: f21970cdc4d5f00de7427948cf608098
+      size: 1083
+    outs:
+    - path: reports/drift_report.html
+      hash: md5
+      md5: 2b0eecf193ade394be6e1b86a6143df0
+      size: 4161750
+    - path: reports/drift_summary.json
+      hash: md5
+      md5: 2b94ff99265a58ed3aeffe9886c1b08b
+      size: 2379

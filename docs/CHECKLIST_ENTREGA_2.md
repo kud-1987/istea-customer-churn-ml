@@ -2,9 +2,9 @@
 
 Auditoria realizada contra la consigna oficial del proyecto, la nota administrativa de Classroom y los contenidos de testing y serving desarrollados en clase.
 
-## Alcance elegido
+## Estado posterior a la devolucion docente
 
-Opcion administrativa del 03/11/2026: aplicacion de inferencia con contrato REST y pruebas automatizadas, sin Docker. Segun la aclaracion de clase, el porcentaje de Docker se redistribuye entre los demas criterios. El proyecto completo con Docker y Docker Compose queda pendiente para el 17/11/2026 y para el examen final.
+La devolucion otorgo 6/10. Los dos faltantes principales fueron: pruebas que invocaban funciones Python sin verificar el contrato HTTP real, y ausencia de Docker/Compose. Ambos puntos fueron corregidos para la entrega final.
 
 ## Cumplimiento funcional
 
@@ -31,10 +31,10 @@ Opcion administrativa del 03/11/2026: aplicacion de inferencia con contrato REST
 | Test de carga del modelo o pipeline | Cumplido | `tests/test_model_loader.py`. |
 | Test de prediccion valida | Cumplido | `tests/test_api.py` y smoke test con el artefacto real. |
 | Test de estructura y tipos de respuesta | Cumplido | `tests/test_api.py`. |
-| Tests de `/health` y `/predict` | Cumplido | Handlers y contratos automatizados; endpoints validados manualmente desde Swagger. |
+| Tests de `/health` y `/predict` | Cumplido y corregido | Requests HTTP en memoria con HTTPX ASGITransport; codigos 200, 422, 503 y 500. |
 | Entradas invalidas y errores esperados | Cumplido | Casos de campo faltante y categoria desconocida; FastAPI documenta respuesta 422. |
-| Dockerfile, `.dockerignore`, imagen y puerto | Postergado por alcance | Excluido de la opcion administrativa del 03/11/2026. |
-| `compose.yaml` y `docker compose up` | Postergado por alcance | Excluido de la opcion administrativa del 03/11/2026. |
+| Dockerfile, `.dockerignore`, imagen y puerto | Implementado | Dockerfile, usuario no root, puerto 8000 y health check. Build pendiente de verificar en un host con Docker. |
+| `compose.yaml` y `docker compose up` | Implementado | Servicio declarativo, variables, puerto, restart y health check. Ejecucion pendiente de un host con Docker. |
 | Tag `entrega-2` sobre el commit presentado | Cumplido | El tag se actualiza al commit definitivo de esta auditoria antes del envio. |
 
 ## Matriz contra los contenidos de clase
@@ -63,7 +63,7 @@ Opcion administrativa del 03/11/2026: aplicacion de inferencia con contrato REST
 - [x] Indice de clase positiva aunque `classes_` este invertido.
 - [x] Limites de los niveles de riesgo.
 - [x] Smoke test con el artefacto real.
-- [x] Suite completa: 10 pruebas aprobadas.
+- [x] Suite completa posterior a la correccion: 14 pruebas aprobadas.
 - [x] Validacion manual en Swagger: `GET /health` respondio HTTP 200 con `model_loaded: true` y `model_version: "1"`.
 - [x] Validacion manual en Swagger: `POST /predict` respondio HTTP 200 con el contrato completo.
 

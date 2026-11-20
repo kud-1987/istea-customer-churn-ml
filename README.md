@@ -1,10 +1,10 @@
 # Customer Churn MLOps
 
-Proyecto individual de Laboratorio de Mineria de Datos. La Entrega 1 construye un flujo de entrenamiento reproducible y trazable. La Entrega 2 publica el modelo seleccionado como una API REST validada y testeada.
+Proyecto individual de Laboratorio de Mineria de Datos. La solucion recorre el ciclo completo: datos versionados, experimentacion trazable, modelo registrado, API REST, testing HTTP, contenedores, CI/CD, publicacion versionada, deployment y monitoreo de drift.
 
 ## Estado de la entrega
 
-La Entrega 1 esta completa. Para la opcion administrativa del 03/11/2026, la Entrega 2 incorpora FastAPI, contratos Pydantic, carga unica del artefacto al iniciar, endpoints de salud, prediccion individual, documentacion OpenAPI y pruebas automaticas. Docker y Docker Compose quedan para el alcance completo del 17/11/2026 y para el examen final.
+El repositorio contiene la implementacion acumulativa de las tres entregas. Las observaciones docentes de la Entrega 2 fueron incorporadas: la suite valida el contrato HTTP real con `TestClient`, y se agregaron Dockerfile y Docker Compose. La entrega final suma logging operativo, Evidently, GitHub Actions, GHCR y runbook para Linux.
 
 ## Problema de negocio
 
@@ -30,6 +30,10 @@ reports/               EDA, metricas y comparacion de modelos
 models/                modelo candidato generado
 app/                   API REST, contratos y logica de inferencia
 tests/                 pruebas del pipeline, contratos e inferencia
+monitoring/scripts     analisis reproducible de drift
+.github/workflows/     CI/CD, build y publicacion en GHCR
+Dockerfile             imagen reproducible de la API
+compose.yaml           ejecucion y operacion declarativa
 dvc.yaml               pipeline reproducible
 params.yaml            parametros versionados
 ```
@@ -113,9 +117,82 @@ Validar la implementacion:
 .\.venv\Scripts\python.exe .\scripts\smoke_test_api_model.py
 ```
 
-El primer comando prueba contratos, endpoints y logica con dobles controlados. El segundo carga `models/candidate.joblib` y ejecuta una inferencia real sobre el primer registro del lote de scoring.
+El primer comando envia requests HTTP reales en memoria mediante `HTTPX ASGITransport` y verifica respuestas `200`, `422`, `503` y `500`, ademas de la logica de ML. Es la misma frontera HTTP que valida `TestClient`, sin invocar directamente los handlers. El segundo carga `models/candidate.joblib` y ejecuta una inferencia real sobre el primer registro del lote de scoring.
 
 La explicacion conceptual completa, el flujo de una prediccion y la auditoria contra la consigna y las clases se encuentran en [docs/GUIA_CONCEPTUAL_ENTREGA_2.docx](docs/GUIA_CONCEPTUAL_ENTREGA_2.docx).
+
+## Docker y Docker Compose
+
+Antes del build, recuperar el modelo administrado por DVC:
+
+```powershell
+.\.venv\Scripts\dvc.exe pull models/candidate.joblib
+docker build -t customer-churn-api:local .
+docker compose up -d --build
+docker compose ps
+docker compose logs -f churn-api
+```
+
+La API queda en `http://localhost:8000`. El contenedor ejecuta como usuario no root e incluye un health check sobre `/health/ready`.
+
+```powershell
+Invoke-RestMethod http://localhost:8000/health/ready
+Invoke-RestMethod -Method Post -Uri http://localhost:8000/predict -ContentType 'application/json' -InFile .\examples\predict_request_valid.json
+```
+
+Detener con `docker compose down`. La operacion completa en Linux se encuentra en [docs/RUNBOOK.md](docs/RUNBOOK.md).
+
+## Observabilidad y Data Drift
+
+Cada request recibe un `request_id`, devuelto tambien en el header `X-Request-ID`. Los logs incluyen metodo, ruta, codigo HTTP, latencia en milisegundos y version del modelo. Esto permite relacionar una respuesta con su evidencia operativa.
+
+Generar el analisis de drift:
+
+```powershell
+.\.venv\Scripts\python.exe .\scripts\run_data_drift.py
+```
+
+Resultados:
+
+- `reports/drift_report.html`: reporte visual interactivo de Evidently.
+- `reports/drift_summary.json`: resumen verificable para la entrega.
+- [docs/RESULTADOS_DRIFT.md](docs/RESULTADOS_DRIFT.md): interpretacion tecnica y plan de accion.
+
+El dataset historico sin target se usa como referencia y `data/production/customer_churn_current.csv` como lote observado. Detectar drift abre una investigacion; no dispara reentrenamiento automatico.
+
+## CI/CD y GHCR
+
+El workflow `.github/workflows/ci-cd.yml` ejecuta pytest como quality gate. En pushes a `main`, tags `v*` o ejecucion manual, recupera el modelo con DVC, construye la imagen y la publica en `ghcr.io/kud-1987/istea-customer-churn-ml` con tag de version y tag de commit.
+
+Configurar en GitHub `Settings > Secrets and variables > Actions`:
+
+- `DAGSHUB_USER`: usuario de DagsHub.
+- `DAGSHUB_TOKEN`: token de DagsHub con acceso de lectura al remote DVC.
+
+`GITHUB_TOKEN` es provisto automaticamente por GitHub Actions. No se guardan credenciales en Git ni dentro de la imagen.
+
+Para cerrar la version final:
+
+```bash
+git tag -a v1.0.0 -m "Entrega final"
+git push origin main
+git push origin v1.0.0
+```
+
+Luego crear la release `v1.0.0` en GitHub y comprobar la imagen con tags `v1.0.0` y `sha-...` en Packages.
+
+## Evidencias de entrega final
+
+La verificacion ejecutada, sus resultados y la ubicacion de cada evidencia se documentan en [`docs/EVIDENCIAS_VERIFICACION_FINAL.md`](docs/EVIDENCIAS_VERIFICACION_FINAL.md). La ficha de uso y limitaciones del modelo esta en [`docs/MODEL_CARD.md`](docs/MODEL_CARD.md), y el plan operativo en [`docs/MONITORING_AND_INCIDENTS.md`](docs/MONITORING_AND_INCIDENTS.md).
+
+La auditoria actualizada esta en [docs/CHECKLIST_FINAL.md](docs/CHECKLIST_FINAL.md) y el recorrido sugerido para el video en [docs/GUION_VIDEO_FINAL.md](docs/GUION_VIDEO_FINAL.md). Las evidencias externas que deben capturarse son:
+
+1. workflow verde en GitHub Actions;
+2. paquete GHCR con tag explicito;
+3. release `v1.0.0`;
+4. `docker compose ps`, `/health/ready`, `/predict` y logs en Linux;
+5. reporte HTML y resumen de drift;
+6. video tecnico de 12 a 15 minutos.
 
 ## Configuracion de DagsHub
 

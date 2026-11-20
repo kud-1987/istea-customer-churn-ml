@@ -16,5 +16,8 @@ data/scoring/*.csv
 reports/figures/*.png
 reports/*.json
 reports/*.csv
+reports/*.html
 !reports/.gitkeep
 !reports/figures/.gitkeep
+!reports/drift_report.html
+!reports/drift_summary.json
