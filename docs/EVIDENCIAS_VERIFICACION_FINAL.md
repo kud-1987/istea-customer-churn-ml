@@ -19,6 +19,8 @@ Resultado comprobado: **14 tests aprobados**. La suite incluye solicitudes HTTP 
 - estructura OpenAPI y carga del modelo.
 - generacion e interpretacion del resumen de drift.
 
+El mismo conjunto fue ejecutado por GitHub Actions sobre Ubuntu y el job `test` finalizo correctamente. Esto acredita que la suite no depende del equipo Windows de desarrollo.
+
 ## API ejecutada
 
 Se inicio Uvicorn y se hicieron solicitudes reales contra `127.0.0.1`.
