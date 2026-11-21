@@ -11,6 +11,8 @@
 echo "$GHCR_TOKEN" | docker login ghcr.io -u kud-1987 --password-stdin
 ```
 
+La imagen `v1.0.0` tambien puede descargarse anonimamente. En el host Ubuntu WSL2 utilizado para la evidencia, el directorio operativo es `/home/seven/customer-churn-deploy`.
+
 ## Operacion habitual
 
 ```bash

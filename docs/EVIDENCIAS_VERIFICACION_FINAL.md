@@ -48,15 +48,32 @@ Resultado comprobado:
 - Evidencia detallada: `reports/drift_report.html`.
 - Resumen para automatizacion: `reports/drift_summary.json`.
 
-## Docker y despliegue
+## Docker y despliegue Linux
 
-El `Dockerfile`, `compose.yaml`, health check y runbook estan incluidos. La computadora de desarrollo usada para esta verificacion no tiene Docker instalado; por lo tanto, el build de imagen y el despliegue Linux deben acreditarse con el workflow de GitHub y el host final.
+Verificacion realizada el 21 de noviembre de 2026:
+
+- Host: Ubuntu 26.04.1 LTS sobre WSL2, kernel Linux de Microsoft.
+- Docker Engine: 29.10.0.
+- Docker Compose: 5.8.0.
+- Prueba oficial `hello-world`: correcta.
+- Imagen: `ghcr.io/kud-1987/istea-customer-churn-ml:v1.0.0`.
+- Estado Compose: `Up (healthy)` y puerto `8000` publicado.
+- `GET /health/ready`: HTTP 200, modelo cargado, version `v1.0.0`.
+- `POST /predict`: HTTP 200, `CHURN`, probabilidad `0.6780069151`, riesgo `MEDIUM`.
+- El `request_id` de la prediccion fue `e5304f02-ae71-4660-9cb6-a1805e1f7def` tanto en JSON como en `X-Request-ID` y logs.
+- Latencia registrada: `21.49 ms`.
+
+Directorio operativo Linux: `/home/seven/customer-churn-deploy`.
+
+Este host permite demostrar la operacion completa en Linux y Docker sin depender del entorno virtual Python de desarrollo. Es local a la misma computadora y no expone la API a Internet.
 
 ## Donde buscar la evidencia externa
 
 1. GitHub, pestana **Actions**: workflow `CI CD` verde.
 2. GitHub, seccion **Packages**: imagen GHCR con tag `v1.0.0` y tag `sha-*`.
-3. GitHub, seccion **Releases**: release `v1.0.0`.
-4. Host Linux: salida de `docker compose ps`, `/health/ready`, `/predict` y `docker compose logs`.
-5. Video final: demostracion de los cuatro puntos anteriores.
+3. GitHub, seccion **Releases**: release `v1.0.0` publicada como Latest.
+4. Ubuntu: `cd /home/seven/customer-churn-deploy` y luego `docker compose ps`.
+5. API: `http://localhost:8000/docs` desde Windows o Ubuntu.
+6. Logs: `docker compose logs --tail=50 churn-api`.
+7. Video final: demostracion de los puntos anteriores.
 

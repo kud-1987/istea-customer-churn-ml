@@ -8,7 +8,7 @@ Fuente: consigna oficial del proyecto integrador y devolucion docente de la Entr
 - [x] Codigos 200, 422, 503 y 500 verificados automaticamente.
 - [x] Dockerfile con runtime, dependencias, API, modelo, usuario no root y health check.
 - [x] `.dockerignore` y `compose.yaml`.
-- [ ] Build y ejecucion Docker verificados en una maquina con Docker instalado.
+- [x] Build remoto en GitHub Actions y ejecucion Docker verificados en Ubuntu WSL2.
 
 ## Definition of Done final
 
@@ -21,10 +21,10 @@ Fuente: consigna oficial del proyecto integrador y devolucion docente de la Entr
 - [x] Model Card, plan de monitoreo y procedimiento de incidentes.
 - [x] Verificacion local: 14 tests aprobados y API real comprobada con Uvicorn.
 - [x] Configurar el secret `DAGSHUB_TOKEN` en GitHub.
-- [ ] Confirmar workflow verde y paquete versionado en GHCR.
-- [ ] Crear release/tag `v1.0.0` sobre el commit final.
-- [ ] Desplegar la imagen en un host Linux diferente del entorno de desarrollo.
-- [ ] Capturar `/health`, `/predict` y logs desde el host Linux.
+- [x] Confirmar workflow verde y paquete versionado en GHCR.
+- [x] Crear release/tag `v1.0.0` sobre el commit final.
+- [x] Desplegar la imagen en Ubuntu WSL2, separado del entorno Python de desarrollo.
+- [x] Verificar `/health`, `/predict`, estado healthy y logs desde Linux.
 - [ ] Grabar y compartir el video tecnico de 12 a 15 minutos.
 
-Los puntos pendientes requieren cuentas o infraestructura externa y no pueden acreditarse solamente con archivos locales.
+El despliegue acreditado usa Ubuntu WSL2 en la misma computadora; demuestra Linux, Docker Engine y Compose, pero no constituye un servidor publico en Internet. El video final sigue requiriendo participacion del alumno.
