@@ -39,13 +39,12 @@ jobs:
         run: python -m pip install "dvc==3.63.0" "pathspec==0.12.1"
       - name: Recover model artifact from DagsHub
         env:
-          DAGSHUB_USER: ${{ secrets.DAGSHUB_USER }}
           DAGSHUB_TOKEN: ${{ secrets.DAGSHUB_TOKEN }}
         run: |
-          test -n "$DAGSHUB_USER" && test -n "$DAGSHUB_TOKEN"
+          test -n "$DAGSHUB_TOKEN"
           dvc remote modify --local origin auth basic
-          dvc remote modify --local origin user "$DAGSHUB_USER"
-          dvc remote modify --local origin password "$DAGSHUB_TOKEN"
+          dvc remote modify --local origin user "$DAGSHUB_TOKEN"
+          dvc remote modify --local origin password "x"
           dvc pull models/candidate.joblib reports/selection.json
       - uses: docker/setup-buildx-action@v3
       - uses: docker/login-action@v3

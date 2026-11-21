@@ -20,7 +20,7 @@ Fuente: consigna oficial del proyecto integrador y devolucion docente de la Entr
 - [x] README final y runbook operativo.
 - [x] Model Card, plan de monitoreo y procedimiento de incidentes.
 - [x] Verificacion local: 14 tests aprobados y API real comprobada con Uvicorn.
-- [ ] Configurar secrets `DAGSHUB_USER` y `DAGSHUB_TOKEN` en GitHub.
+- [x] Configurar el secret `DAGSHUB_TOKEN` en GitHub.
 - [ ] Confirmar workflow verde y paquete versionado en GHCR.
 - [ ] Crear release/tag `v1.0.0` sobre el commit final.
 - [ ] Desplegar la imagen en un host Linux diferente del entorno de desarrollo.

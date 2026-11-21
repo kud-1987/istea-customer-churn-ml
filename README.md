@@ -166,8 +166,7 @@ El workflow `.github/workflows/ci-cd.yml` ejecuta pytest como quality gate. En p
 
 Configurar en GitHub `Settings > Secrets and variables > Actions`:
 
-- `DAGSHUB_USER`: usuario de DagsHub.
-- `DAGSHUB_TOKEN`: token de DagsHub con acceso de lectura al remote DVC.
+- `DAGSHUB_TOKEN`: Default Access Token de DagsHub. El workflow lo usa como usuario Basic; la contrasena tecnica solo fuerza el encabezado requerido por DVC.
 
 `GITHUB_TOKEN` es provisto automaticamente por GitHub Actions. No se guardan credenciales en Git ni dentro de la imagen.
 
