@@ -5,6 +5,8 @@ from contextlib import asynccontextmanager
 from uuid import uuid4
 
 from fastapi import FastAPI, HTTPException, Request, status
+from prometheus_client import CONTENT_TYPE_LATEST, Counter, Histogram, generate_latest
+from starlette.responses import Response
 
 from app.inference import predict_churn
 from app.model_loader import get_model_version, load_model
@@ -12,6 +14,14 @@ from app.schemas import HealthResponse, PredictionRequest, PredictionResponse
 
 
 logger = logging.getLogger(__name__)
+prediction_requests = Counter(
+    "churn_prediction_requests_total", "POST /predict requests", ["outcome"]
+)
+for outcome in ("success", "client_error", "server_error"):
+    prediction_requests.labels(outcome)
+prediction_duration = Histogram(
+    "churn_prediction_duration_seconds", "Successful POST /predict latency"
+)
 
 
 def configure_logging() -> None:
@@ -45,9 +55,12 @@ async def request_logging(request: Request, call_next):
     request_id = request.headers.get("X-Request-ID") or str(uuid4())
     request.state.request_id = request_id
     started = time.perf_counter()
+    observe = request.method == "POST" and request.url.path == "/predict"
     try:
         response = await call_next(request)
     except Exception:
+        if observe:
+            prediction_requests.labels("server_error").inc()
         latency_ms = (time.perf_counter() - started) * 1000
         logger.exception(
             "request_failed request_id=%s method=%s path=%s latency_ms=%.2f model_version=%s",
@@ -59,6 +72,12 @@ async def request_logging(request: Request, call_next):
         )
         raise
     latency_ms = (time.perf_counter() - started) * 1000
+    if observe:
+        code = response.status_code
+        outcome = "server_error" if code >= 500 else "client_error" if code >= 400 else "success"
+        prediction_requests.labels(outcome).inc()
+        if 200 <= code < 300:
+            prediction_duration.observe(latency_ms / 1000)
     response.headers["X-Request-ID"] = request_id
     logger.info(
         "request_completed request_id=%s method=%s path=%s status_code=%s latency_ms=%.2f model_version=%s",
@@ -70,6 +89,11 @@ async def request_logging(request: Request, call_next):
         getattr(request.app.state, "model_version", "unknown"),
     )
     return response
+
+
+@app.get("/metrics", include_in_schema=False)
+async def metrics() -> Response:
+    return Response(generate_latest(), headers={"Content-Type": CONTENT_TYPE_LATEST})
 
 
 @app.get("/health", response_model=HealthResponse, tags=["health"])

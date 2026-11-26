@@ -56,3 +56,6 @@ Senalar que el contenedor esta `healthy`, la version es `v1.0.0` y el `request_i
 - Health check y prediccion reales.
 - Mismo `request_id` en respuesta y logs.
 - Evidently y explicacion de la accion propuesta.
+## Demostracion de monitoreo de Clase 15
+
+Antes de grabar, levantar el stack de [monitoreo](MONITOREO_CLASE_15.md). Durante el bloque de observabilidad mostrar el target de Prometheus en estado UP, generar trafico de prueba y explicar las tres consultas del tablero de Grafana: solicitudes por segundo, proporcion de errores y latencia p95. Aclarar por que la prueba incluye un 422 deliberado. Mostrar Evidently por separado como evidencia de drift, no de latencia ni disponibilidad.

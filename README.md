@@ -144,6 +144,8 @@ Detener con `docker compose down`. La operacion completa en Linux se encuentra e
 
 ## Observabilidad y Data Drift
 
+La configuracion opcional de [Prometheus y Grafana](docs/MONITOREO_CLASE_15.md) incluye un tablero, las consultas y el procedimiento de verificacion.
+
 Cada request recibe un `request_id`, devuelto tambien en el header `X-Request-ID`. Los logs incluyen metodo, ruta, codigo HTTP, latencia en milisegundos y version del modelo. Esto permite relacionar una respuesta con su evidencia operativa.
 
 Generar el analisis de drift:

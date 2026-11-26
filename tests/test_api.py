@@ -3,6 +3,7 @@ import pytest
 from contextlib import asynccontextmanager
 
 from httpx import ASGITransport, AsyncClient
+from prometheus_client.parser import text_string_to_metric_families
 
 import app.main as main_module
 
@@ -112,3 +113,28 @@ async def test_openapi_documentation_is_available():
     schema = main_module.app.openapi()
     assert "/predict" in schema["paths"]
     assert schema["paths"]["/predict"]["post"]["responses"]["422"]
+
+
+async def test_prediction_metrics_over_http(monkeypatch):
+    async def snapshot(client):
+        response = await client.get("/metrics")
+        assert response.status_code == 200
+        assert response.headers["content-type"].startswith("text/plain")
+        return {
+            (sample.name, sample.labels.get("outcome")): sample.value
+            for family in text_string_to_metric_families(response.text)
+            for sample in family.samples
+            if sample.name in {"churn_prediction_requests_total", "churn_prediction_duration_seconds_count"}
+        }
+
+    async with api_client(monkeypatch) as client:
+        before = await snapshot(client)
+        assert (await client.post("/predict", json=VALID_PAYLOAD)).status_code == 200
+        assert (await client.post("/predict", json={})).status_code == 422
+        main_module.app.state.model = None
+        assert (await client.post("/predict", json=VALID_PAYLOAD)).status_code == 503
+        assert (await client.get("/health/live")).status_code == 200
+        after = await snapshot(client)
+    assert set(before) == set(after)
+    assert len(after) == 4
+    assert all(after[key] - before[key] == 1 for key in after)
